@@ -1,0 +1,102 @@
+- name: Configure EC2 instance
+  hosts: web
+  become: true
+  tasks:
+    - name: Update and upgrade apt packages
+      apt:
+        update_cache: yes
+        upgrade: dist
+
+    - name: Install MySQL
+      apt:
+        name: mysql-server
+        state: present
+
+    - name: Secure MySQL installation
+      command: mysql_secure_installation
+
+    - name: Install PHP and required modules
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - php8.1
+        - php8.1-cli
+        - php8.1-fpm
+        - php8.1-mysql
+        - php8.1-common
+        - php8.1-calendar
+        - php8.1-ctype
+        - php8.1-curl
+        - php8.1-date
+        - php8.1-dom
+        - php8.1-exif
+        - php8.1-ffi
+        - php8.1-fileinfo
+        - php8.1-filter
+        - php8.1-ftp
+        - php8.1-gettext
+        - php8.1-hash
+        - php8.1-iconv
+        - php8.1-json
+        - php8.1-libxml
+        - php8.1-mbstring
+        - php8.1-mysqli
+        - php8.1-mysqlnd
+        - php8.1-openssl
+        - php8.1-pcntl
+        - php8.1-pcre
+        - php8.1-PDO
+        - php8.1-pdo_mysql
+        - php8.1-Phar
+        - php8.1-posix
+        - php8.1-readline
+        - php8.1-Reflection
+        - php8.1-session
+        - php8.1-shmop
+        - php8.1-SimpleXML
+        - php8.1-sockets
+        - php8.1-sodium
+        - php8.1-SPL
+        - php8.1-standard
+        - php8.1-sysvmsg
+        - php8.1-sysvsem
+        - php8.1-sysvshm
+        - php8.1-tokenizer
+        - php8.1-xml
+        - php8.1-xmlreader
+        - php8.1-xmlwriter
+        - php8.1-xsl
+        - php8.1-zip
+        - php8.1-zlib
+
+    - name: Install Node.js
+      shell: |
+        curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+        apt-get install -y nodejs
+
+    - name: Install NPM
+      apt:
+        name: npm
+        state: present
+
+    - name: Install PM2
+      npm:
+        name: pm2
+        state: present
+        global: yes
+
+    - name: Verify installations
+      shell: |
+        mysql --version
+        php --version
+        node --version
+        npm --version
+        pm2 --version
+
+    - name: Setup React
+      shell: |
+        npx create-react-app my-react-app
+        cd my-react-app
+        npm install
+        cd ..
